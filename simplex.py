@@ -4,11 +4,7 @@ def simplex(tipo_problema:int, numero_variaveis:int, numero_restricoes:int, func
     quantidade_colunas=numero_restricoes+numero_variaveis+1
     quantidade_linhas = numero_restricoes+1
     
-
     matriz = np.zeros((quantidade_linhas, quantidade_colunas))
-            
-
-    #max
 
     ##### BLOCO DE MONTAGEM DO ESTADO INICIAL DA TABELA
     funcao_objetivo_np=np.array(funcao_objetivo, dtype=float)*-1
@@ -42,7 +38,6 @@ def simplex(tipo_problema:int, numero_variaveis:int, numero_restricoes:int, func
             razoes[i-1]= float('inf') if razoes[i-1]<0 else razoes[i-1] 
             # se for negativo, definir como inf
 
-
         linha_pivot = np.argmin((razoes))+1
         print(linha_pivot)
         print(coluna_pivot)
@@ -55,13 +50,10 @@ def simplex(tipo_problema:int, numero_variaveis:int, numero_restricoes:int, func
         print(linha_ja_calculada)
 
         # calcular as linhas restantes
-        # matriz[i] - (matriz[i][coluna_pivot])*matriz[linha_pivot]
         for i in range(0,quantidade_linhas):
             if linha_ja_calculada[i]==0:
                 matriz[i]=matriz[i] - (matriz[i][coluna_pivot])*matriz[linha_pivot]
         print(matriz)
-        # for i in range(quantidade_linhas):
-        #     for j in range(quantidade_colunas):
     return matriz[0][quantidade_colunas-1]
               
 f = open("txt/entrada.txt")
@@ -75,15 +67,11 @@ numero_restricoes = linhas[2]
 
 funcao_objetivo = linhas[3].split()
 
-
 # aplicar slice nas restricoes
 restricoes = linhas[4::]
 
-
 # transforma em array 2d as restricoes, retirando espacos em branco
 lista_restricoes = [e.split() for e in restricoes]
-
-
 
 # ao final temos:
 # tres variaveis com a descricao do problema 
