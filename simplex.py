@@ -11,35 +11,29 @@ def simplex(tipo_problema:int, numero_variaveis:int, numero_restricoes:int, func
     #max
 
     ##### BLOCO DE MONTAGEM DO ESTADO INICIAL DA TABELA
-    funcao_objetivo_np=np.array(funcao_objetivo, dtype=float)*-1 if tipo_problema==1 else np.array(funcao_objetivo, dtype=float)
+    funcao_objetivo_np=np.array(funcao_objetivo, dtype=float)*-1
     print(funcao_objetivo_np)
     funcao_restricoes=np.array(restricoes, dtype=float)
 
-
-    # remover for: matriz[0] = funcao_objetivo_np
-    for i in range(0,numero_variaveis):
-        matriz[0][i]=funcao_objetivo_np[i]
+    # preenchendo a linha Z
+    matriz[0][0:numero_variaveis]=funcao_objetivo_np[0:numero_variaveis]
     matriz[0][numero_variaveis::] = 0
     print(funcao_restricoes)
 
-    # Possivel remover este for com slice
-    for i in range(1,quantidade_linhas):
-        for j in range(0, numero_variaveis):
-            matriz[i][j] = funcao_restricoes[i-1][j]
+    # pega todas restrições de funcao_restricoes e as coloca na matriz
+    matriz[1:quantidade_linhas, :numero_variaveis] = funcao_restricoes[:quantidade_linhas-1, :numero_variaveis]
 
-    # possivel remover este for com:  
-    # matriz[::][quantidade_colunas-1]= funcao_restricoes[::][numero_variaveis]
-    for i in range(1,quantidade_linhas):
-        matriz[i][quantidade_colunas-1] = funcao_restricoes[i-1][numero_variaveis]
+    # Preenche o lado direito do tableau 
+    matriz[1::, quantidade_colunas-1]= funcao_restricoes[::,numero_variaveis]
 
-    # Monta a identidade, porém é possivel remover este for
+    # Monta a identidade
     for i in range(1,quantidade_linhas):
         matriz[i][numero_variaveis+i-1]=1   
 
     # Fim do bloco de construcao inicial
-
-    while(1):
-        coluna_pivot = np.argmin(matriz[0])
+    print(matriz)
+    while((np.any(matriz[0]<0) and tipo_problema==1) or (np.any(matriz[0]>0) and tipo_problema==-1)):
+        coluna_pivot = np.argmin(matriz[0]) if tipo_problema ==1 else np.argmax(matriz[0])
 
         razoes = np.zeros((quantidade_linhas-1))
         # escolher menor razao positiva
@@ -49,7 +43,7 @@ def simplex(tipo_problema:int, numero_variaveis:int, numero_restricoes:int, func
             # se for negativo, definir como inf
 
 
-        linha_pivot = np.argmin(razoes)+1
+        linha_pivot = np.argmin((razoes))+1
         print(linha_pivot)
         print(coluna_pivot)
 
@@ -68,15 +62,9 @@ def simplex(tipo_problema:int, numero_variaveis:int, numero_restricoes:int, func
         print(matriz)
         # for i in range(quantidade_linhas):
         #     for j in range(quantidade_colunas):
-        if(not np.any(matriz[0]<0)):
-            break
     return matriz[0][quantidade_colunas-1]
-        
-        
-
-
-
-f = open("txt\\entrada.txt")
+              
+f = open("txt/entrada.txt")
 linhas = f.read().split('\n')
 
 tipo_problema = linhas[0]
